@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -53,12 +54,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $actif = null;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?\DateTimeImmutable $date_add = null;
+    #[ORM\ManyToOne(inversedBy: 'User')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Campus $users = null;
+
+    #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participant')]
+    private Collection $estinscrit;
+
+    #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
+    private Collection $organisateur;
 
     public function __construct()
     {
-        $this->date_add = new \DateTimeImmutable();
+        $this->estinscrit = new ArrayCollection();
+        $this->organisateur = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -202,16 +211,73 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    
-    public function getDateAdd(): ?\DateTimeImmutable
+
+    public function getUsers(): ?Campus
     {
-        return $this->date_add;
+        return $this->users;
     }
 
-    public function setDateAdd(\DateTimeImmutable $date_add): static
+    public function setUsers(?Campus $users): static
     {
-        $this->date_add = $date_add;
+        $this->users = $users;
 
         return $this;
     }
-}   
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getEstinscrit(): Collection
+    {
+        return $this->estinscrit;
+    }
+
+    public function addEstinscrit(Sortie $estinscrit): static
+    {
+        if (!$this->estinscrit->contains($estinscrit)) {
+            $this->estinscrit->add($estinscrit);
+            $estinscrit->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEstinscrit(Sortie $estinscrit): static
+    {
+        if ($this->estinscrit->removeElement($estinscrit)) {
+            $estinscrit->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getOrganisateur(): Collection
+    {
+        return $this->organisateur;
+    }
+
+    public function addOrganisateur(Sortie $organisateur): static
+    {
+        if (!$this->organisateur->contains($organisateur)) {
+            $this->organisateur->add($organisateur);
+            $organisateur->setOrganisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrganisateur(Sortie $organisateur): static
+    {
+        if ($this->organisateur->removeElement($organisateur)) {
+            // set the owning side to null (unless already changed)
+            if ($organisateur->getOrganisateur() === $this) {
+                $organisateur->setOrganisateur(null);
+            }
+        }
+
+        return $this;
+    }
+}
