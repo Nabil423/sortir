@@ -1,11 +1,9 @@
 {% extends "base.html.twig"%}
 
-{% block title %}Sortie - Accueil
-{% endblock %}
+{% block title %}Sortir - Accueil {% endblock %}
 
-{% block stylesheets %}
-{{ encore_entry_link_tags('app') }}
-<style>
+{% block stylesheets %} 
+    <style>
         /* Styles pour centrer le contenu */
         body {
             display: flex;
@@ -60,12 +58,24 @@
             width: 100%;
         }
     </style>
-    
 {% endblock %}
-
-{%  block body %}
     
-<div class="top-right-links">
+
+
+{% block body %}
+   <div class="container mt-4">
+    <div class="jumbotron">
+        <h1 class="display-4">Bienvenue dans l' Application...</h1>
+        
+        <hr class="my-4">
+        <p>Pour commencer, rdv sur la page d' inscription.</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="#" role="button">Inscription</a>
+        </p>
+    </div>
+    </div>
+
+    <div class="top-right-links">
     <a href="#">Accueil</a> | <a href="#">Mon profil</a> | <a href="#">Se déconnecter</a>
 </div>
 <div class="container">
@@ -138,4 +148,5 @@
 
     </form>
 </div>
+
 {% endblock %}
