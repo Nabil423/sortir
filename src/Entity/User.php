@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -51,6 +52,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $actif = null;
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?\DateTimeImmutable $date_add = null;
+
+    public function __construct()
+    {
+        $this->date_add = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -193,4 +202,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-}
+    
+    public function getDateAdd(): ?\DateTimeImmutable
+    {
+        return $this->date_add;
+    }
+
+    public function setDateAdd(\DateTimeImmutable $date_add): static
+    {
+        $this->date_add = $date_add;
+
+        return $this;
+    }
+}   
