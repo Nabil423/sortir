@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -68,6 +69,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->estinscrit = new ArrayCollection();
         $this->organisateur = new ArrayCollection();
+    }
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?\DateTimeImmutable $date_add = null;
+
+    public function _construct()
+    {
+        $this->date_add = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -277,6 +286,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $organisateur->setOrganisateur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDateAdd(): ?\DateTimeImmutable
+    {
+        return $this->date_add;
+    }
+
+    public function setDateAdd(\DateTimeImmutable $date_add): static
+    {
+        $this->date_add = $date_add;
 
         return $this;
     }
