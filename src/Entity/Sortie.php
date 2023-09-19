@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\SortieRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -22,41 +20,17 @@ class Sortie
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $durée = null;
+    #[ORM\Column]
+    private ?int $Duree = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $infosSortie = null;
+    #[ORM\Column]
+    private ?int $nombInscripMax = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $état = null;
-
-    #[ORM\OneToMany(mappedBy: 'sortie', targetEntity: Campus::class)]
-    private Collection $campuses;
-
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Etat $etat = null;
-
-    #[ORM\ManyToOne(inversedBy: 'sorties')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Lieu $lieu = null;
-
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'estinscrit')]
-    private Collection $participant;
-
-    #[ORM\ManyToOne(inversedBy: 'organisateur')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $organisateur = null;
-
-    public function __construct()
-    {
-        $this->campuses = new ArrayCollection();
-        $this->participant = new ArrayCollection();
-    }
+    private ?string $infoSortie = null;
 
     public function getId(): ?int
     {
@@ -87,14 +61,14 @@ class Sortie
         return $this;
     }
 
-    public function getDurée(): ?string
+    public function getDuree(): ?int
     {
-        return $this->durée;
+        return $this->Duree;
     }
 
-    public function setDurée(string $durée): static
+    public function setDuree(int $Duree): static
     {
-        $this->durée = $durée;
+        $this->Duree = $Duree;
 
         return $this;
     }
@@ -111,116 +85,26 @@ class Sortie
         return $this;
     }
 
-    public function getInfosSortie(): ?string
+    public function getNombInscripMax(): ?int
     {
-        return $this->infosSortie;
+        return $this->nombInscripMax;
     }
 
-    public function setInfosSortie(string $infosSortie): static
+    public function setNombInscripMax(int $nombInscripMax): static
     {
-        $this->infosSortie = $infosSortie;
+        $this->nombInscripMax = $nombInscripMax;
 
         return $this;
     }
 
-    public function getétat(): ?string
+    public function getInfoSortie(): ?string
     {
-        return $this->état;
+        return $this->infoSortie;
     }
 
-    public function setétat(string $état): static
+    public function setInfoSortie(string $infoSortie): static
     {
-        $this->état = $état;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Campus>
-     */
-    public function getCampuses(): Collection
-    {
-        return $this->campuses;
-    }
-
-    public function addCampus(Campus $campus): static
-    {
-        if (!$this->campuses->contains($campus)) {
-            $this->campuses->add($campus);
-            $campus->setSortie($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCampus(Campus $campus): static
-    {
-        if ($this->campuses->removeElement($campus)) {
-            // set the owning side to null (unless already changed)
-            if ($campus->getSortie() === $this) {
-                $campus->setSortie(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getEtat(): ?Etat
-    {
-        return $this->etat;
-    }
-
-    public function setEtat(?Etat $etat): static
-    {
-        $this->etat = $etat;
-
-        return $this;
-    }
-
-    public function getLieu(): ?Lieu
-    {
-        return $this->lieu;
-    }
-
-    public function setLieu(?Lieu $lieu): static
-    {
-        $this->lieu = $lieu;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getParticipant(): Collection
-    {
-        return $this->participant;
-    }
-
-    public function addParticipant(User $participant): static
-    {
-        if (!$this->participant->contains($participant)) {
-            $this->participant->add($participant);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipant(User $participant): static
-    {
-        $this->participant->removeElement($participant);
-
-        return $this;
-    }
-
-    public function getOrganisateur(): ?User
-    {
-        return $this->organisateur;
-    }
-
-    public function setOrganisateur(?User $organisateur): static
-    {
-        $this->organisateur = $organisateur;
+        $this->infoSortie = $infoSortie;
 
         return $this;
     }
