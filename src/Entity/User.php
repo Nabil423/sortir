@@ -3,17 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -33,51 +29,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(length: 20)]
-    #[Assert\Length(min:3, max:20)]
-    private ?string $Pseudo = null;
-
-    #[ORM\Column(length: 20)]
-    #[Assert\Length(min:1, max:20)]
-    private ?string $Nom = null;
+    #[ORM\Column(length: 50)]
+    private ?string $prénom = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\Length(min:1, max:50)]
-    private ?string $Prenom = null;
-
-    #[ORM\Column(length: 14)]
-    #[Assert\Length(min:10, max:14)]
-    private ?string $Telephone = null;
+    private ?string $nom = null;
 
     #[ORM\Column]
-    private ?bool $admin = null;
+    private ?int $telephone = null;
+
+    #[ORM\Column]
+    private ?bool $administrateur = null;
 
     #[ORM\Column]
     private ?bool $actif = null;
-
-    #[ORM\ManyToOne(inversedBy: 'User')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Campus $users = null;
-
-    #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participant')]
-    private Collection $estinscrit;
-
-    #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
-    private Collection $organisateur;
-
-    public function __construct()
-    {
-        $this->estinscrit = new ArrayCollection();
-        $this->organisateur = new ArrayCollection();
-    }
-
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?\DateTimeImmutable $date_add = null;
-
-    public function _construct()
-    {
-        $this->date_add = new \DateTimeImmutable();
-    }
 
     public function getId(): ?int
     {
@@ -149,62 +114,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getPseudo(): ?string
+    public function getPrénom(): ?string
     {
-        return $this->Pseudo;
+        return $this->prénom;
     }
 
-    public function setPseudo(string $Pseudo): static
+    public function setPrénom(string $prénom): static
     {
-        $this->Pseudo = $Pseudo;
+        $this->prénom = $prénom;
 
         return $this;
     }
 
     public function getNom(): ?string
     {
-        return $this->Nom;
+        return $this->nom;
     }
 
-    public function setNom(string $Nom): static
+    public function setNom(string $nom): static
     {
-        $this->Nom = $Nom;
+        $this->nom = $nom;
 
         return $this;
     }
 
-    public function getPrenom(): ?string
+    public function getTelephone(): ?int
     {
-        return $this->Prenom;
+        return $this->telephone;
     }
 
-    public function setPrenom(string $Prenom): static
+    public function setTelephone(int $telephone): static
     {
-        $this->Prenom = $Prenom;
+        $this->telephone = $telephone;
 
         return $this;
     }
 
-    public function getTelephone(): ?string
+    public function isAdministrateur(): ?bool
     {
-        return $this->Telephone;
+        return $this->administrateur;
     }
 
-    public function setTelephone(string $Telephone): static
+    public function setAdministrateur(bool $administrateur): static
     {
-        $this->Telephone = $Telephone;
-
-        return $this;
-    }
-
-    public function isAdmin(): ?bool
-    {
-        return $this->admin;
-    }
-
-    public function setAdmin(bool $admin): static
-    {
-        $this->admin = $admin;
+        $this->administrateur = $administrateur;
 
         return $this;
     }
@@ -217,87 +170,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActif(bool $actif): static
     {
         $this->actif = $actif;
-
-        return $this;
-    }
-
-    public function getUsers(): ?Campus
-    {
-        return $this->users;
-    }
-
-    public function setUsers(?Campus $users): static
-    {
-        $this->users = $users;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Sortie>
-     */
-    public function getEstinscrit(): Collection
-    {
-        return $this->estinscrit;
-    }
-
-    public function addEstinscrit(Sortie $estinscrit): static
-    {
-        if (!$this->estinscrit->contains($estinscrit)) {
-            $this->estinscrit->add($estinscrit);
-            $estinscrit->addParticipant($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEstinscrit(Sortie $estinscrit): static
-    {
-        if ($this->estinscrit->removeElement($estinscrit)) {
-            $estinscrit->removeParticipant($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Sortie>
-     */
-    public function getOrganisateur(): Collection
-    {
-        return $this->organisateur;
-    }
-
-    public function addOrganisateur(Sortie $organisateur): static
-    {
-        if (!$this->organisateur->contains($organisateur)) {
-            $this->organisateur->add($organisateur);
-            $organisateur->setOrganisateur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOrganisateur(Sortie $organisateur): static
-    {
-        if ($this->organisateur->removeElement($organisateur)) {
-            // set the owning side to null (unless already changed)
-            if ($organisateur->getOrganisateur() === $this) {
-                $organisateur->setOrganisateur(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getDateAdd(): ?\DateTimeImmutable
-    {
-        return $this->date_add;
-    }
-
-    public function setDateAdd(\DateTimeImmutable $date_add): static
-    {
-        $this->date_add = $date_add;
 
         return $this;
     }
