@@ -5,9 +5,3 @@ controllers:
 kernel:
     resource: ../src/Kernel.php
     type: annotation
-
-    # config/routes.yaml
-    user_register:
-        path: /register
-        controller: App\Controller\UserController::register
-
