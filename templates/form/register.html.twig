@@ -1,0 +1,19 @@
+{# templates/user/register.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Créer un compte</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.password) }}
+    {{ form_row(form.Pseudo) }}
+    {{ form_row(form.Nom) }}
+    {{ form_row(form.Prenom) }}
+    {{ form_row(form.Telephone) }}
+    {{ form_row(form.actif) }}
+    {{ form_row(form.users) }}
+    {{ form_row(form.estinscrit) }}
+    {{ form_end(form) }}
+{% endblock %}
