@@ -25,9 +25,13 @@ class Campus
     #[ORM\JoinColumn(nullable: false)]
     private ?Sortie $sortie = null;
 
+    #[ORM\OneToMany(mappedBy: 'campus', targetEntity: User::class)]
+    private Collection $user;
+
     public function __construct()
     {
         $this->User = new ArrayCollection();
+        $this->user = new ArrayCollection();
     }
 
     public function getId(): ?int
