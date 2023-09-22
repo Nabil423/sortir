@@ -141,9 +141,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->prenom;
     }
 
-    public function setPrenom(string $prénom): static
+    public function setPrenom(string $prenom): static
     {
-        $this->prenom = $prénom;
+        $this->prenom = $prenom;
 
         return $this;
     }
